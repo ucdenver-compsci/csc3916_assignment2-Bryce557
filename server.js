@@ -72,28 +72,6 @@ router.post('/signin', (req, res) => {
     }
 });
 
-router.route('/testcollection')
-    .delete(authController.isAuthenticated, (req, res) => {
-        console.log(req.body);
-        res = res.status(200);
-        if (req.get('Content-Type')) {
-            res = res.type(req.get('Content-Type'));
-        }
-        var o = getJSONObjectForMovieRequirement(req);
-        res.json(o);
-    }
-    )
-    .put(authJwtController.isAuthenticated, (req, res) => {
-        console.log(req.body);
-        res = res.status(200);
-        if (req.get('Content-Type')) {
-            res = res.type(req.get('Content-Type'));
-        }
-        var o = getJSONObjectForMovieRequirement(req);
-        res.json(o);
-    }
-    );
-
 router.route('/movies')
     .get((req, res) => {
         var o = getJSONObjectForMovieRequirement(req)
@@ -107,28 +85,25 @@ router.route('/movies')
         o.message = "movie saved"
         res.json(o)
     })
-    .put(authJwtController.isAuthenticated, (req, res) => {
-        var o = getJSONObjectForMovieRequirement(req)
-        o.status = 200
-        o.message = "movie updated"
-        res.json(o)
-    })
-    .delete(authJwtController.isAuthenticated, (req, res) => {
-        // HTTP DELETE Method
-        // Requires Basic authentication
-        // Returns a JSON object with status, message, headers, query
-        var o = getJSONObjectForMovieRequirement(req)
+    .delete(authController.isAuthenticated, (req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
         o.status = 200
         o.message = "movie deleted"
-        res.json(o)
+        res.json(o);
+    }
+    )
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200
+        o.message = "movie updated"
+        res.json(o);
     })
     .all((req, res) => {
-        // Any other HTTP Method
+        // Any other HTTP method
         // Returns a message stating that the HTTP method is unsupported
-        res.status(405).send({message: 'HTTP method not supported.'})
+        res.status(405).send({message: 'HTTP method not supported'})
     });
-
-    
+  
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
